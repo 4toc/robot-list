@@ -1,0 +1,3 @@
+@mixin phone {
+  @media (max-width: 564px) { @content; }
+}
