@@ -1,14 +1,9 @@
 # robot-list
 
-This template should help get you started developing with Vue 3 in Vite.
+This is user list with auto load after scroll
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+Data is fetched in store and getter getData filters with search/number of pages.
+To highlight the text I made MarkedText.vue with render function because v-html isn't safe
 
 ## Project Setup
 
