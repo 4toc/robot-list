@@ -21,6 +21,8 @@ const store = createStore({
   mutations: {
     setSearch(state, value) {
       state.search = value
+    },
+    filterSearchData(state) {
       if (state.search.length) {
         const findingReg = new RegExp('(' + state.search + ')','i')
         state.searchData = state.fullData.filter(user => {
@@ -47,6 +49,7 @@ const store = createStore({
     fetchData(context) {
       axios.get('https://gist.githubusercontent.com/allaud/093aa499998b7843bb10b44ea6ea02dc/raw/c400744999bf4b308f67807729a6635ced0c8644/users.json').then(data => {
         context.commit('setData', data.data)
+        context.commit('filterSearchData')
       })
     }
   }

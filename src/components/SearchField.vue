@@ -12,6 +12,7 @@ const search = computed(() => store.state.search)
 
 const  changeSearch = debounce((event) => {
   store.commit('setSearch', event.target.value)
+  store.commit('filterSearchData')
   router.push({
     path: '/',
     query: {search: encodeURIComponent(search.value)}
