@@ -6,36 +6,41 @@ const store = createStore({
     search: '',
     fullData: [],
     counterShowedItems: 15,
+    stepItemsScroll: 15,
+    searchData: [],
   },
   getters: {
     getData(state) {
-      const array = state.fullData.slice(0,state.counterShowedItems)
       if (state.search.length) {
-        const findingReg = new RegExp('(' + state.search + ')','i')
-        return array.filter(user => {
-          if (user.name.match(findingReg) ||
-              user.title.match(findingReg) ||
-              user.address.match(findingReg) ||
-              user.email.match(findingReg)) {
-            return true
-          }
-          return false
-        })
+        return state.searchData.slice(0, state.counterShowedItems)
+      } else {
+        return state.fullData.slice(0, state.counterShowedItems)
       }
-      return array
     }
   },
   mutations: {
     setSearch(state, value) {
       state.search = value
+      if (state.search.length) {
+        const findingReg = new RegExp('(' + state.search + ')','i')
+        state.searchData = state.fullData.filter(user => {
+          if (user.name.match(findingReg) ||
+            user.title.match(findingReg) ||
+            user.address.match(findingReg) ||
+            user.email.match(findingReg)) {
+            return true
+          }
+          return false
+        })
+      }
     },
     setData(state, value) {
       state.fullData = value
     },
     addShowedItems(state) {
-      state.counterShowedItems = state.counterShowedItems + 15 > state.fullData.length
+      state.counterShowedItems = state.counterShowedItems + state.stepItemsScroll > state.fullData.length
         ? state.fullData.length
-        : state.counterShowedItems + 15
+        : state.counterShowedItems + state.stepItemsScroll
     }
   },
   actions: {
