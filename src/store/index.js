@@ -1,5 +1,6 @@
 import {createStore} from 'vuex';
 import axios from 'axios'
+import findIndexWord from "../utils/findIndexWord";
 
 const store = createStore({
   state: {
@@ -24,12 +25,12 @@ const store = createStore({
     },
     filterSearchData(state) {
       if (state.search.length) {
-        const findingReg = new RegExp('(' + state.search + ')','i')
+        const searchLowerCase = state.search.toLowerCase()
         state.searchData = state.fullData.filter(user => {
-          if (user.name.match(findingReg) ||
-            user.title.match(findingReg) ||
-            user.address.match(findingReg) ||
-            user.email.match(findingReg)) {
+          if (findIndexWord(user.name, searchLowerCase) ||
+              findIndexWord(user.title, searchLowerCase) ||
+              findIndexWord(user.address, searchLowerCase) ||
+              findIndexWord(user.email, searchLowerCase)) {
             return true
           }
           return false

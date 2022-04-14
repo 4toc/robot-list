@@ -1,5 +1,6 @@
 <script>
-import {computed, h} from 'vue';
+import {h} from 'vue';
+import findIndexWord from "../utils/findIndexWord";
 
 export default {
   props: {
@@ -14,12 +15,12 @@ export default {
   },
   setup(props) {
     const renderList = () => {
-      const match = props.text.match(new RegExp(props.search, 'i'))
-      if (props.search.length && match) {
+      const findingIndex = findIndexWord(props.text, props.search.toLowerCase())
+      if (props.search.length && findingIndex) {
         return [
-          h('span', props.text.substring(0, match.index)),
-          h('mark', props.text.substring(match.index, match.index + props.search.length)),
-          h('span', props.text.substring(match.index + props.search.length)),
+          h('span', props.text.substring(0, findingIndex)),
+          h('mark', props.text.substring(findingIndex, findingIndex + props.search.length)),
+          h('span', props.text.substring(findingIndex + props.search.length)),
         ]
       } else {
         return h('span', props.text)
