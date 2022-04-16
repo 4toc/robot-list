@@ -6,16 +6,14 @@ const store = createStore({
   state: {
     search: '',
     fullData: [],
-    counterShowedItems: 15,
-    stepItemsScroll: 15,
     searchData: [],
   },
   getters: {
     getData(state) {
       if (state.search.length) {
-        return state.searchData.slice(0, state.counterShowedItems)
+        return state.searchData
       } else {
-        return state.fullData.slice(0, state.counterShowedItems)
+        return state.fullData
       }
     }
   },
@@ -40,11 +38,6 @@ const store = createStore({
     setData(state, value) {
       state.fullData = value
     },
-    addShowedItems(state) {
-      state.counterShowedItems = state.counterShowedItems + state.stepItemsScroll > state.fullData.length
-        ? state.fullData.length
-        : state.counterShowedItems + state.stepItemsScroll
-    }
   },
   actions: {
     fetchData(context) {

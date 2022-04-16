@@ -1,36 +1,86 @@
 <script setup>
 import UserListItem from './UserListItem.vue'
 import {useStore} from 'vuex';
-import {computed, ref} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 
 const store = useStore()
 
-const onScroll = ({ target: { scrollTop, clientHeight, scrollHeight }}) => {
-  if (scrollTop + clientHeight >= scrollHeight) {
-    store.commit('addShowedItems')
-  }
-}
+const rowHeight = 156 // in pixels
+const rowGapHeight = 20
+const scrollTop = ref(0)
+const rootRef = ref(null)
+const rootHeight = ref(400)
 
 const getData = computed(() => store.getters.getData)
+
+const viewportHeight = computed(() => {
+  return rowHeight * getData.value.length
+})
+
+const startIndex = computed(() => {
+  let startNode = Math.floor(scrollTop.value / rowHeight) - rowGapHeight
+  return Math.max(0, startNode)
+})
+
+const visibleNodeCount = computed(() => {
+  let count = Math.ceil(rootHeight.value / rowHeight) + 2 * rowGapHeight
+  return Math.min(getData.value.length - startIndex.value, count)
+})
+
+const visibleItems = computed(() => {
+  return getData.value.slice(startIndex.value, startIndex.value + visibleNodeCount.value)
+})
+
+const offsetY = computed(() => {
+  return startIndex.value * rowHeight
+})
+
+const spacerStyle = computed(() => {
+  return {
+    transform: "translateY(" + offsetY.value + "px)"
+  }
+})
+
+const viewportStyle = computed(() => {
+  return {
+    height: viewportHeight.value + "px",
+    position: "relative"
+  }
+})
+const rootStyle = computed(() => {
+  return {
+    height: rootHeight.value + "px",
+  }
+})
+
+const onScroll = ({ target }) => {
+  scrollTop.value = target.scrollTop
+}
+
+onMounted(() => {
+  rootHeight.value = rootRef.value.clientHeight
+})
 </script>
 
 <template>
-  <div class="user-list" @scroll="onScroll">
-    <user-list-item v-for="(item, index) in getData" :user="item" :key="index" />
+  <div class="user-list" ref="rootRef" :style="rootStyle" @scroll="onScroll">
+    <div class="user-list__viewport" :style="viewportStyle" ref="viewportRef">
+      <div class="user-list__spacer" :style="spacerStyle">
+        <user-list-item v-for="(item, index) in visibleItems" :user="item" :key="index" />
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="scss">
 .user-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   padding-bottom: 40px;
-  overflow-y: scroll;
-  overflow-x: hidden;
   height: 60vh;
   padding-right: 12px;
   padding-top: 1px;
+
+  overflow-y: scroll;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -50,6 +100,12 @@ const getData = computed(() => store.getters.getData)
 
   &::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+
+  &__spacer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 }
 </style>
